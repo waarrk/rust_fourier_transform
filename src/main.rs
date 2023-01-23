@@ -28,4 +28,6 @@ fn main() {
     println!("spectrum len: {:?}", spectrum.len());
     println!("max spectrum f: {:?}", max_index + 1);
     println!("max spectrum: {:?}", max);
+
+    print!("Hello");
 }

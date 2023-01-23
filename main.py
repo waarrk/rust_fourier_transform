@@ -8,9 +8,9 @@ import numpy as np
 def transform(input_file_name, output_file_name):
     # Rustの実行ファイルを呼び出す
     start = time.perf_counter()
-    subprocess.run(
-        ['./target/debug/rust_fourier_transform', '>', output_file_name], stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL)
+    with open(output_file_name, 'w') as f:
+        subprocess.run(['./target/debug/rust_fourier_transform',
+                       input_file_name, '8000'], stdout=f, stderr=subprocess.DEVNULL)
     return (time.perf_counter() - start)
 
 

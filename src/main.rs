@@ -27,7 +27,7 @@ fn main() {
         }
     };
 
-    let sampling_freq = 8000;
+    let sampling_freq = args[1].to_str().unwrap().parse::<i64>().unwrap();
 
     let frames = matrix
         .slice(ndarray::s![.., 1])
@@ -39,7 +39,7 @@ fn main() {
     let spectrum = fourier::transform::dft(frames, sampling_freq);
 
     for (i, s) in spectrum.iter().enumerate() {
-        let amp = s.norm() / matrix.shape()[0] as f64;
+        let amp = s.norm() * 2.0 / matrix.shape()[0] as f64;
         println!("{}, {}", i, amp);
     }
 }

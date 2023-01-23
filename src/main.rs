@@ -1,33 +1,45 @@
-use std::f64::consts::PI;
+use std::ffi::OsString;
+use std::process;
 
+use rust_fourier_transform::file_controller::args;
+
+mod file_controller;
 mod fourier;
 
 fn main() {
-    let flame_length = 1000;
-    let sampling_freq = 16000;
-    let hz = 2000;
+    let mut args: [OsString; 2] = [OsString::from(""), OsString::from("")];
+    let mut matrix: ndarray::Array2<f64> = ndarray::Array2::zeros((0, 0));
+    args::get_all()
+        .unwrap()
+        .iter()
+        .enumerate()
+        .for_each(|(i, arg)| {
+            args[i] = arg.clone();
+        });
 
-    let sin_curve: Vec<f64> = (0..flame_length)
-        .map(|i| (i as f64) * 2.0 * PI * (hz as f64) / (sampling_freq as f64))
-        .map(|a| a.sin())
-        .collect();
+    matrix = match file_controller::file_io::csv_to_ndarray(
+        file_controller::file_io::fopen(&args[0]).unwrap(),
+    ) {
+        Ok(matrix) => matrix,
+        Err(err) => {
+            eprintln!("Error: {}", err);
+            process::exit(1);
+        }
+    };
 
-    let spectrum = fourier::transform::dft(sin_curve, sampling_freq);
+    let sampling_freq = 8000;
 
-    let (max_index, max) =
-        spectrum
-            .iter()
-            .enumerate()
-            .fold((usize::MIN, f64::MIN), |(i_a, a), (i_b, &b)| {
-                if b.norm() > a {
-                    (i_b, b.norm())
-                } else {
-                    (i_a, a)
-                }
-            });
-    println!("spectrum len: {:?}", spectrum.len());
-    println!("max spectrum f: {:?}", max_index + 1);
-    println!("max spectrum: {:?}", max);
+    let frames = matrix
+        .slice(ndarray::s![.., 1])
+        .to_vec()
+        .iter()
+        .map(|x| *x as f64)
+        .collect::<Vec<f64>>();
 
-    print!("Hello");
+    let spectrum = fourier::transform::dft(frames, sampling_freq);
+
+    for (i, s) in spectrum.iter().enumerate() {
+        let amp = s.norm() / matrix.shape()[0] as f64;
+        println!("{}, {}", i, amp);
+    }
 }

@@ -6,7 +6,6 @@ import numpy as np
 
 
 def transform(input_file_name, output_file_name):
-    # Rustの実行ファイルを呼び出す
     start = time.perf_counter()
     with open(output_file_name, 'w') as f:
         subprocess.run(['./target/debug/rust_fourier_transform',
@@ -16,9 +15,9 @@ def transform(input_file_name, output_file_name):
 
 def graph(input_wave, output_wave, max_freq):
     plt.figure("Rust Fourier Spectrum Display")
-    plt.title("frequency vs gain")
 
     plt.subplot(2, 1, 1)
+    plt.title("frequency vs gain on case 2")
     plt.plot(input_wave["time"] * 1000,
              input_wave["amp"], lw=0.5, color="blue")
     plt.xlim(left=0, right=(1/max_freq) * 1000)
@@ -39,7 +38,7 @@ def graph(input_wave, output_wave, max_freq):
 
 
 if __name__ == '__main__':
-    input_file_name = "sin_200_1000.txt"  # 入力ファイル名
+    input_file_name = "sin_100_500_2000.txt"  # 入力ファイル名
     output_file_name = "out.csv"  # 出力ファイル名
     max_freq = 200  # 予想される最大周波数
 

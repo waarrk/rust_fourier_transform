@@ -9,7 +9,7 @@ def transform(input_file_name, output_file_name):
     start = time.perf_counter()
     with open(output_file_name, 'w') as f:
         subprocess.run(['./target/debug/rust_fourier_transform',
-                       input_file_name, '8000'], stdout=f, stderr=subprocess.DEVNULL)
+                       input_file_name, '44100'], stdout=f, stderr=subprocess.DEVNULL)
     return (time.perf_counter() - start)
 
 
@@ -17,7 +17,7 @@ def graph(input_wave, output_wave, max_freq):
     plt.figure("Rust Fourier Spectrum Display")
 
     plt.subplot(2, 1, 1)
-    plt.title("frequency vs gain on case 2")
+    plt.title("frequency vs gain on sample 4")
     plt.plot(input_wave["time"] * 1000,
              input_wave["amp"], lw=0.5, color="blue")
     plt.xlim(left=0, right=(1/max_freq) * 1000)
@@ -38,9 +38,9 @@ def graph(input_wave, output_wave, max_freq):
 
 
 if __name__ == '__main__':
-    input_file_name = "sin_100_500_2000.txt"  # 入力ファイル名
-    output_file_name = "out.csv"  # 出力ファイル名
-    max_freq = 200  # 予想される最大周波数
+    input_file_name = "sample_1.csv"  # 入力ファイル名
+    output_file_name = "out1.csv"  # 出力ファイル名
+    max_freq = 400  # 予想される最大周波数
 
     print("-- 関数読み込み --")
     input_wave = pd.read_csv(input_file_name, delimiter=",",
@@ -55,5 +55,4 @@ if __name__ == '__main__':
                               header=None, names=("freq", "amp"))
 
     print("-- グラフ描画 --")
-    # matplotlib
-    graph(input_wave, output_wave, max_freq)
+    #graph(input_wave, output_wave, max_freq)

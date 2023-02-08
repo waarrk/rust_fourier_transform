@@ -1,6 +1,7 @@
-This is e-pTeX, Version 3.141592653-p4.0.0-220214-2.6 (utf8.euc) (TeX Live 2022) (preloaded format=platex 2023.1.25)  31 JAN 2023 02:59
+This is e-pTeX, Version 3.141592653-p4.0.0-220214-2.6 (utf8.euc) (TeX Live 2022) (preloaded format=platex 2023.1.25)  9 FEB 2023 02:32
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
 **/Users/waarrk/Documents/software_prayground/rust_fourier_transform/report/report
 (/Users/waarrk/Documents/software_prayground/rust_fourier_transform/report/report.tex
@@ -260,6 +261,9 @@ Package: lastpage 2021/09/03 v1.2n Refers to last page's name (HMM; JPG)
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/cases/cases.sty
 Package: cases 2020/03/29 ver 3.2
 \numc@numwid=\dimen194
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/caption/caption.sty
 Package: caption 2022/03/01 v3.6b Customizing captions (AR)
  (/usr/local/texlive/2022/texmf-dist/tex/latex/caption/caption3.sty
@@ -462,19 +466,59 @@ File: ../picture/case1.png Graphic file (type bmp)
 File: ../picture/case2.png Graphic file (type bmp)
 <../picture/case2.png>
  [5]
+File: ../picture/case3.png Graphic file (type bmp)
+<../picture/case3.png>
+ [6]
+File: ../picture/order.png Graphic file (type bmp)
+<../picture/order.png>
+ [7] [8]
+File: ../picture/obj.png Graphic file (type bmp)
+<../picture/obj.png>
+File: ../picture/1.png Graphic file (type bmp)
+<../picture/1.png>
+File: ../picture/2.png Graphic file (type bmp)
+<../picture/2.png>
+ [9]
+File: ../picture/3.png Graphic file (type bmp)
+<../picture/3.png>
+File: ../picture/4.png Graphic file (type bmp)
+<../picture/4.png>
+ (../maxvalue.py [10])
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 362.
+LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
+(Font)              scaled to size 9.60999pt on input line 362.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 362.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 9.60999pt on input line 362.
+
+
+LaTeX Warning: Citation `online' on page 11 undefined on input line 362.
+
+File: ../picture/qonpet.png Graphic file (type bmp)
+<../picture/qonpet.png>
+[11] (./report.bbl)
 ***** List of packages loaded by `plautopatch': *****
  plarray.
 *****************************************************
 
 AED: lastpage setting LastPage
-[6] (./report.aux) ) 
+[12] (./report.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 7803 strings out of 478724
- 125330 string characters out of 5858392
- 744631 words of memory out of 5000000
- 26118 multiletter control sequences out of 15000+600000
- 486095 words of font info for 107 fonts, out of 8000000 for 9000
+ 7978 strings out of 478724
+ 128058 string characters out of 5858392
+ 744726 words of memory out of 5000000
+ 26274 multiletter control sequences out of 15000+600000
+ 486403 words of font info for 108 fonts, out of 8000000 for 9000
  934 hyphenation exceptions out of 8191
  70i,13n,76p,361b,2013s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on report.dvi (7 pages, 22904 bytes).
+Output written on report.dvi (13 pages, 36276 bytes).

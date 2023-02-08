@@ -1,4 +1,3 @@
-
 \RequirePackage{plautopatch}  % pLaTeX または upLaTeX のとき
 %\documentclass[uplatex,dvipdfmx,titlepage,a4j]{jsarticle}% upLaTeX のとき
 \documentclass[dvipdfmx,titlepage,a4j]{jsarticle}  % pLaTeX のとき
@@ -14,6 +13,7 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{cases}
+\usepackage{url}
 \usepackage[hang,small,bf]{caption}
 \usepackage[subrefformat=parens]{subcaption}
 
@@ -176,7 +176,7 @@ Rust依存環境
 
 \section{解析正当性の確認}
 作成したRustによるDFTの関数が正しく動作しているかを確認するため，既知の正弦波の合成波形を入力し，応答を確認する．
-ここでは，振幅5の波形を入力するものとし200Hzと1000Hzの正弦波の合成波を用いた評価をcase1，100Hz，500Hz，2000Hzの正弦波の合成波を用いた評価をcase2とする．
+ここでは，振幅5の波形を入力するものとし200Hzと1000Hzの正弦波の合成波を用いた評価をcase1，100Hz，500Hz，2000Hzの正弦波の合成波を用いた評価をcase2，case2のうち100Hzの振幅を2としたものをcase3とする．
 
 解析データの評価を簡単とするため，同関数を呼び出しグラフ化するPythonのスクリプトを作成した．
 スクリプトは，入力波形と計算後の振幅スペクトルをmatplotlibを用いて可視化するものである．
@@ -218,14 +218,171 @@ case2で用いたデータを入力として，Pythonスクリプトを実行し
   \label{case2}
 \end{figure}
 図\ref{case2}からは，100Hz，500Hz，2000Hzにピークを持つ振幅スペクトルが得られていることが確認できる．
+しかしながら，2000Hzの振幅が4.5とやや減少している．これはサンプリング周波数が8000Hzであるため，2000Hzの正弦波の周期が4サンプルとなりサンプリング定理は満たしているものの不足しているのではないかと考えられる．
+
+\subsection{case2 100Hz，500Hz，2000Hzの正弦波の合成波 100Hzのみ振幅2}
+case3で用いたデータを入力として，Pythonスクリプトを実行した応答を図\ref{case3}に示す．
+処理は2.81秒で正常に終了した．
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\linewidth]{../picture/case3.png}
+  \caption{case3におけるDFT結果}
+  \label{case3}
+\end{figure}
+図\ref{case3}からは，100Hz，500Hz，2000Hzにピークを持つ振幅スペクトルが得られており，100Hzの振幅が2になっていることが確認できる．
 
 \subsection{結言}
-case1，case2ともに入力に対し意図した変換を実施でき，作成したRust関数および可視化用Pythonスクリプトを用いて，正弦波の合成波の振幅スペクトルを正しく計算することができたといえる．
+case1，case2，case3ともに入力に対し意図した変換を実施でき，作成したRust関数および可視化用Pythonスクリプトを用いて，正弦波の合成波の振幅スペクトルを正しく計算することができたといえる．
+case2，case3より，入力するデータの高周波領域の振幅については注意が必要であることがわかった．
 
-\begin{thebibliography}{99}
-  \bibitem{toyama} 外山 茂浩、実験テキスト「フーリエ解析」、（2022年）
-  \bibitem{nikkei} 日経BP、パワーコンディショナー（PCS）とは、\\https://project.nikkeibp.co.jp/ms/article/WORD/20130925/305286、（2013年10月）
-  \bibitem{nikkei2} エネチェンジ、EV(電気自動車)の気になる充電！時間や場所、料金は？、\\https://enechange.jp/articles/ev-charging、（2021年12月19日）
-\end{thebibliography}
+\subsection{解析にかかる時間の確認}
+作成したプログラムは，原理的には計算量オーダー$O(N^2)$である．ここでは，作成したプログラムの能力を確認するため，
+Rustプログラムの解析開始から完了までの実行時間をPython側から測定し，グラフ化した．
+図\ref{time}に示す．
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\linewidth]{../picture/order.png}
+  \caption{解析にかかる時間}
+  \label{time}
+\end{figure}
+
+図\ref{time}からは，解析にかかる時間は，入力データのサンプル数に対して，ほぼ$O(N)$とデータ数に対し効率が高すぎることがわかる．
+原因については，不明であり，現在検討中である．
+
+\section{実験方法}
+具体的な実験の方法について述べる．
+
+\subsection{データ取得}
+実験に用いるデータは，既に取得済みのものを用いる．
+データは新潟県の米山サービスエリアにて録音した電気自動車急速充電器の動作音である．
+録音した音声データは，サンプリング周波数44100Hz，量子化ビット数16bitである．
+
+取得時の条件を以下に示す．
+\begin{itemize}
+  \item 日時：2022年1月10日 19:00:48
+  \item 録音機器：Apple iPhone XR
+  \item 録音時間：約6秒
+  \item 録音距離：約1m
+  \item サンプリング周波数：44100Hz
+  \item 録音位置：電気自動車急速充電器の側面
+  \item 録音方法：動作中の急速充電器付近の地面にに録音機器を固定し取得．
+\end{itemize}
+
+\subsection{データの前処理}
+\label{preprocess}
+取得したデータは，そのままでは解析に用いることができないため，前処理を行う．
+前処理は，以下の手順で行う．
+\begin{enumerate}
+  \item データをフリーソフトAudacity読み込む．
+  \item データ中から周期関数としての特性を読み取り，1周期のみをトリミングする．
+  \item データを1列目に時間，2列目に振幅を持つCSVファイルとして書き出す．
+\end{enumerate}
+
+\subsection{データの解析}
+前処理を行ったデータを用いて，解析を行う．
+解析は，以下の手順となる．
+\begin{enumerate}
+  \item CSVのURLをPythonスクリプトに渡す．
+  \item PythonスクリプトがRustプログラムを呼び出し，データの周波数特性を解析する．
+  \item Pythonスクリプトが，計算結果をグラフ化する．
+  \item 数値を評価する．
+\end{enumerate}
+
+\section{測定結果}
+測定対象の画像を図\ref{fig:sample}に示す．
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\linewidth]{../picture/obj.png}
+  \caption{測定対象の画像}
+  \label{fig:sample}
+\end{figure}
+
+電源周波数である50Hzを基準とし、N倍となる100Hz、200Hzなどの周波数が顕著に現れると予想し、測定対象の電気自動車急速充電器の動作音を測定した．
+対象に対し、4度の測定を行い、中間の周期的と見られる波形に対し\ref{preprocess}章の手順を行った上で、フーリエ変換を行った．
+順にSample1、Sample2、Sample3、Sample4とし、各サンプルのデータ数はそれぞれ400である．
+
+図\ref{fig:sample1}、図\ref{fig:sample2}に解析結果を示す．
+
+\begin{figure}[H]
+  \begin{minipage}[b]{0.45\linewidth}
+    \centering
+    \includegraphics[scale=0.3]{../picture/1.png}
+    \subcaption{Sample1}
+  \end{minipage}
+  \begin{minipage}[b]{0.45\linewidth}
+    \centering
+    \includegraphics[scale=0.3]{../picture/2.png}
+    \subcaption{Sample2}
+  \end{minipage}
+  \caption{Sample 1, 2の結果}
+  \label{fig:sample1}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{minipage}[b]{0.45\linewidth}
+    \centering
+    \includegraphics[scale=0.3]{../picture/3.png}
+    \subcaption{Sample1}
+  \end{minipage}
+  \begin{minipage}[b]{0.45\linewidth}
+    \centering
+    \includegraphics[scale=0.3]{../picture/4.png}
+    \subcaption{Sample2}
+  \end{minipage}
+  \caption{Sample 3, 4の結果}
+  \label{fig:sample2}
+\end{figure}
+
+各データより、高周波騒音の主な成分は15000Hzから20000Hzの間に分布していることがわかる．
+Pythonスクリプトを作成し、各ピークの周波数を計算した．スクリプトをリスト\ref{maxvalue.py}、計算結果を\ref{table: peak}に示す．
+
+\lstinputlisting[caption={maxvalue.py},label={maxvalue.py}]{../maxvalue.py}
+
+\begin{table}[H]
+  \centering
+  \caption{ピーク周波数}
+  \label{table: peak}
+  \begin{tabular}{c|c|c|c|c|c}
+    \hline\hline
+    Sample & 1 & 2 & 3 & 4 & ave\\
+    \hline
+    Peak & 15985 & 16444 & 16339 & 16331 & 16274\\
+    \hline
+  \end{tabular}
+\end{table}
+
+表\ref{table: peak}より、ピーク周波数の平均値は16274Hzであり、この周波数に対する有効な騒音軽減方法を検討すれば良いことがわかる．
+
+\section{騒音軽減方法の検討}
+最も安価かつ効果的な騒音軽減方法として、騒音を吸収する材料を用いる方法を検討する．
+騒音を吸収する材料として、木材やゴム、繊維素材などがある．
+ここでは、吸音スポンジを例として、騒音軽減方法の検討を行う．
+
+選定の結果、エンジンルーム用吸音素材「QonPET」が他の素材と比較して高周波領域の騒音吸収に有効であることがわかった．
+図\ref{fig:qonpet}にQonPETの吸音特性を示す．\cite{online}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\linewidth]{../picture/qonpet.png}
+  \caption{QonPETの吸音特性}
+  \label{fig:qonpet}
+\end{figure}
+
+\section{結論}
+本研究では、電気自動車急速充電器の高周波騒音を測定し、ピーク周波数を計算した．
+計算結果より、ピーク周波数は16274Hzであることがわかった．
+これに対し、吸音スポンジを用いた騒音軽減方法を検討し、QonPETが他の素材と比較して高周波領域の騒音吸収に有効であることがわかった．
+
+しかしながら、より詳細な音響測定データをもつ吸音スポンジは主に4000Hzまでの周波数に対してデータシートを公開しており、
+高周波領域の騒音吸収特性については不明であることから、「QonPET」以外の吸音スポンジを用いた騒音軽減方法の検討の価値は残されていると考える．
+
+\section{終わりに}
+今回、電気自動車急速充電器内部の回路についての検証は、内部回路図が得られなかったことより断念した．
+周波数の高さから、電気自動車急速充電器の高周波騒音は、2次側によるものと考えられる．
+今後もサンプルを増やし個人的に検証を続けていきたい．
+
+\nocite{*}
+\bibliographystyle{jplain}
+\bibliography{refs}
 
 \end{document}
